@@ -180,7 +180,7 @@ class ResourceValidator implements ResourceVisitor {
     }
     for (const value of propertyValues) {
       if (!this.checkPresence(value, element, path)) {
-        return;
+        continue;
       }
       // Check cardinality
       let values: TypedValue[];

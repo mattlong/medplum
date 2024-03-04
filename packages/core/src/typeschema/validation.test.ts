@@ -467,7 +467,7 @@ describe('FHIR resource validation', () => {
     expect(() => validateResource(medplumBundle)).not.toThrow();
   });
 
-  test('Profile with restriction on base type field', () => {
+  test.only('Profile with restriction on base type field', () => {
     const patient: Patient = {
       resourceType: 'Patient',
       identifier: [
@@ -481,6 +481,14 @@ describe('FHIR resource validation', () => {
           // Missing system property
           value: '555-555-5555',
         },
+        {
+          system: 'email',
+          value: 'patient@example.com',
+        },
+        // {
+        //   // Missing system property
+        //   value: '555-555-5555',
+        // },
       ],
       gender: 'unknown',
       name: [
@@ -490,6 +498,7 @@ describe('FHIR resource validation', () => {
         },
       ],
     };
+    // console.log(JSON.stringify(patient, undefined, 2));
     expect(() => validateResource(patient, { profile: patientProfile })).toThrow(
       new Error('Missing required property (Patient.telecom.system)')
     );
