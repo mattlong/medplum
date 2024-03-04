@@ -178,8 +178,26 @@ class ResourceValidator implements ResourceVisitor {
     if (!element) {
       throw new Error(`Missing element validation schema for ${key}`);
     }
-    for (const value of propertyValues) {
-      if (!this.checkPresence(value, element, path)) {
+    for (let valueIdx = 0; valueIdx < propertyValues.length; valueIdx++) {
+      const value = propertyValues[valueIdx];
+      let includeIndex: boolean = false;
+      let indexedPath: string = path;
+
+      if (key.includes('.')) {
+        const parentElement = schema.elements[key.split('.')[0]];
+        if (parentElement?.isArray ?? false) {
+          includeIndex = true;
+          const keyParts = key.split('.');
+          indexedPath = path.replace(key, keyParts.join(`[${valueIdx}].`));
+        }
+      } else if (element.isArray ?? false) {
+        includeIndex = true;
+        indexedPath = `${path}[${valueIdx}]`;
+      }
+
+      console.log(includeIndex, indexedPath);
+
+      if (!this.checkPresence(value, element, indexedPath)) {
         continue;
       }
       // Check cardinality
@@ -235,6 +253,7 @@ class ResourceValidator implements ResourceVisitor {
   ): value is TypedValue | TypedValue[] {
     if (value === undefined) {
       if (field.min > 0) {
+        debugger;
         this.issues.push(createStructureIssue(path, 'Missing required property'));
       }
       return false;
