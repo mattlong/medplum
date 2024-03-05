@@ -7,6 +7,13 @@ import { ComplexTypeInputProps } from '../ResourcePropertyInput/ResourceProperty
 
 export type IdentifierInputProps = ComplexTypeInputProps<Identifier>;
 
+function getInputExpression(parentPath: string, propName: string, arrayIndex?: number): string {
+  if (arrayIndex === undefined) {
+    return parentPath + '.' + propName;
+  }
+
+  return `${parentPath}[${arrayIndex}].${propName}`;
+}
 export function IdentifierInput(props: IdentifierInputProps): JSX.Element {
   const { path, outcome } = props;
   const [value, setValue] = useState(props.defaultValue);
@@ -31,14 +38,14 @@ export function IdentifierInput(props: IdentifierInputProps): JSX.Element {
         required={(systemElement?.min ?? 0) > 0}
         defaultValue={value?.system}
         onChange={(e) => setValueWrapper({ ...value, system: e.currentTarget.value })}
-        error={getErrorsForInput(outcome, path + '.system')}
+        error={getErrorsForInput(outcome, getInputExpression(path, 'system', props.arrayIndex))}
       />
       <TextInput
         placeholder="Value"
         required={(valueElement?.min ?? 0) > 0}
         defaultValue={value?.value}
         onChange={(e) => setValueWrapper({ ...value, value: e.currentTarget.value })}
-        error={getErrorsForInput(outcome, path + '.value')}
+        error={getErrorsForInput(outcome, getInputExpression(path, 'value', props.arrayIndex))}
       />
     </Group>
   );

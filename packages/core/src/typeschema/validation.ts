@@ -194,11 +194,12 @@ class ResourceValidator implements ResourceVisitor {
         includeIndex = true;
         indexedPath = `${path}[${valueIdx}]`;
       }
+      path = indexedPath;
 
       console.log(includeIndex, indexedPath);
 
       if (!this.checkPresence(value, element, indexedPath)) {
-        continue;
+        return;
       }
       // Check cardinality
       let values: TypedValue[];
@@ -253,7 +254,6 @@ class ResourceValidator implements ResourceVisitor {
   ): value is TypedValue | TypedValue[] {
     if (value === undefined) {
       if (field.min > 0) {
-        debugger;
         this.issues.push(createStructureIssue(path, 'Missing required property'));
       }
       return false;
@@ -327,6 +327,7 @@ class ResourceValidator implements ResourceVisitor {
         continue;
       }
       if (!(key in properties) && !(key.startsWith('_') && key.slice(1) in properties)) {
+        debugger;
         this.issues.push(createStructureIssue(`${path}.${key}`, `Invalid additional property "${key}"`));
       }
     }

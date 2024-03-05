@@ -467,7 +467,7 @@ describe('FHIR resource validation', () => {
     expect(() => validateResource(medplumBundle)).not.toThrow();
   });
 
-  test.only('Profile with restriction on base type field', () => {
+  test('Profile with restriction on base type field', () => {
     const patient: Patient = {
       resourceType: 'Patient',
       identifier: [
@@ -500,7 +500,7 @@ describe('FHIR resource validation', () => {
     };
     // console.log(JSON.stringify(patient, undefined, 2));
     expect(() => validateResource(patient, { profile: patientProfile })).toThrow(
-      new Error('Missing required property (Patient.telecom.system)')
+      new Error('Missing required property (Patient.telecom[0].system)')
     );
   });
 
@@ -766,7 +766,7 @@ describe('FHIR resource validation', () => {
     expect(() => validateResource({ resourceType: 'Patient' })).not.toThrow();
   });
 
-  test('Array properties', () => {
+  test.only('Array properties', () => {
     expect(() => validateResource({ resourceType: 'Patient', name: [{ given: ['Homer'] }] })).not.toThrow();
 
     try {
@@ -774,6 +774,7 @@ describe('FHIR resource validation', () => {
       fail('Expected error');
     } catch (err) {
       const outcome = (err as OperationOutcomeError).outcome;
+      console.debug(JSON.stringify(outcome.issue, undefined, 2));
       expect(outcome.issue?.[0]?.severity).toEqual('error');
       expect(outcome.issue?.[0]?.expression?.[0]).toEqual('Patient.name');
     }

@@ -6,12 +6,40 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { cleanResource } from './utils';
 
+const DEBUG_OUTCOME: OperationOutcome = {
+  resourceType: 'OperationOutcome',
+  issue: [
+    {
+      severity: 'error',
+      code: 'structure',
+      details: {
+        text: 'Missing required property',
+      },
+      expression: ['Patient.identifier[1].system'],
+    },
+  ],
+  extension: [
+    {
+      url: 'https://medplum.com/fhir/StructureDefinition/tracing',
+      extension: [
+        {
+          url: 'requestId',
+          valueId: 'c59fc26f-d0c4-4d30-a600-add51f8ceeba',
+        },
+        {
+          url: 'traceId',
+          valueId: 'ef076766-633c-446d-a793-48ac2b587dfc',
+        },
+      ],
+    },
+  ],
+};
 export function EditPage(): JSX.Element | null {
   const medplum = useMedplum();
   const { resourceType, id } = useParams() as { resourceType: ResourceType; id: string };
   const [value, setValue] = useState<Resource | undefined>();
   const navigate = useNavigate();
-  const [outcome, setOutcome] = useState<OperationOutcome | undefined>();
+  const [outcome, setOutcome] = useState<OperationOutcome | undefined>(DEBUG_OUTCOME);
 
   useEffect(() => {
     medplum
