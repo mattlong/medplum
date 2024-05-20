@@ -45,9 +45,9 @@ export function buildElementsContext({
   profileUrl?: string;
   /** Whether debug logging is enabled */
   debugMode?: boolean;
-}): ElementsContextType | undefined {
+}): ElementsContextType {
   if (path === parentContext?.path) {
-    return undefined;
+    return parentContext;
   }
 
   const mergedElements: ElementsContextType['elements'] = mergeElementsForContext(

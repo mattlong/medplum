@@ -75,7 +75,7 @@ export function applyDefaultValuesToElementWithVisitor(
   crawler.crawlElement(element, key, parentPath);
   const modifiedContainer = visitor.getDefaultValue();
 
-  return getValueAtKey(modifiedContainer, key, element, elements);
+  return getValueAtKey(modifiedContainer, key, elements);
 }
 
 export function getDefaultValuesForNewSliceEntry(
@@ -152,7 +152,7 @@ class DefaultValueVisitor implements SchemaVisitor {
       for (const parent of parentArray) {
         applyMinimums(parent, key, element, elementsContext.elements);
         applyFixedOrPatternValue(parent, key, element, elementsContext.elements);
-        const elementValue = getValueAtKey(parent, key, element, elementsContext.elements);
+        const elementValue = getValueAtKey(parent, key, elementsContext.elements);
         if (elementValue !== undefined) {
           elementValues.push(elementValue);
         }
@@ -178,7 +178,7 @@ class DefaultValueVisitor implements SchemaVisitor {
     }
 
     for (const parentValue of this.value.values) {
-      const elementValue = getValueAtKey(parentValue, key, element, elementsContext.elements);
+      const elementValue = getValueAtKey(parentValue, key, elementsContext.elements);
 
       // remove empty items from arrays
       if (Array.isArray(elementValue)) {
@@ -273,7 +273,7 @@ function applyMinimums(
   element: InternalSchemaElement,
   elements: Record<string, InternalSchemaElement>
 ): void {
-  const existingValue = getValueAtKey(parent, key, element, elements);
+  const existingValue = getValueAtKey(parent, key, elements);
 
   if (element.min > 0 && existingValue === undefined) {
     if (isComplexTypeCode(element.type[0].code)) {
@@ -305,12 +305,7 @@ function setValueAtKey(parent: any, value: any, key: string, element: InternalSc
   }
 }
 
-function getValueAtKey(
-  value: object,
-  key: string,
-  element: InternalSchemaElement,
-  elements: Record<string, InternalSchemaElement>
-): any {
+export function getValueAtKey(value: object, key: string, elements: Record<string, InternalSchemaElement>): any {
   const keyParts = key.split('.');
   let last: any = value;
   let answer: any;
